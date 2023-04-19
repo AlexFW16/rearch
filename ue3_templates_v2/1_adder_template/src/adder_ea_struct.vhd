@@ -44,7 +44,7 @@ architecture adder_arch of adder is
   begin
     add1: adder_4bit port map(a(3 downto 0), b(3 downto 0), c, sum_add1, car_add1); --Mapping the first 4 digits of the input of adder as input of add1
     add2: adder_4bit port map(a(7 downto 4), b(7 downto 4), '0', sum_add2, car_add2);
-    add3: adder_4bit port map(a(7 downto 4), b(7 downto 4), '1', sum_add3, car_add4);
+    add3: adder_4bit port map(a(7 downto 4), b(7 downto 4), '1', sum_add3, car_add3);
 
     mult: multiplexer port map(car_add3 & sum_add3(3 downto 0), car_add2 & sum_add2(3 downto 0), car_add1); -- Gets 2 5-bit inputs, which are created by combining carry and sum of the 4-bit adders
 
@@ -52,28 +52,6 @@ architecture adder_arch of adder is
   end adder_arch;
 
   
-
-library IEEE; use IEEE.STD_LOGIC_1164.all;
-architecture adder_arch of adder is 
-  component full_adder
-    port(a, b, carry_in: in std_ulogic; -- input ports
-  carry, sum: out std_ulogic);
-  end component;
-
-  component multiplexer
-   port(a, b: in std_ulogic_vector(4 downto 0);
-       control : in std_ulogic;
-       c : out std_ulogic_vector(4 downto 0));
-  end component;
-  
-
-
-begin
-
-  
-
-end adder_arch;
-
 
 -- Multplexer gets 2 2-bit inputs (a, b), where a0 is the sum and a1 is the carry of the prev. addition
 -- input a is the addition with carry, input b the addition without, hence a gets propagated if control = 1
