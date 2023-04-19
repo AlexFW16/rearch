@@ -30,8 +30,8 @@ architecture adder_arch for adder is
 
   -- Intermediate carry declaration
   -- add1: First adder
-  -- add2: second adder, carry 0
-  -- add3: third adder,carry 1
+  -- add2: second adder, carry_in 0
+  -- add3: third adder,carry_in 1
   signal sum_add1: std_ulogic_vector(3 downto 0); -- The result of the first adder, the lower side of the overall result
   signal car_add1: std_ulogic; -- carry of the first adder, used as control-input for the multiplexer
   signal sum_add2: std_ulogic_vector(3 downto 0);
@@ -40,8 +40,16 @@ architecture adder_arch for adder is
   signal car_add3: std_ulogic;
   signal mul_out: std_ulogic_vector(4 downto 0); -- output of the multiplexer, upper part of final result
 
-  
-  
+
+  begin
+    add1: adder_4bit port map(a(3 downto 0), b(3 downto 0), c, sum_add1, car_add1); --Mapping the first 4 digits of the input of adder as input of add1
+    add2: adder_4bit port map(a(7 downto 4), b(7 downto 4), 0 sum_add2, car_add2);
+    add3: adder_4bit port map(a(7 downto 4), b(7 downto 4), 1, sum_add3, car_add4);
+
+    mult: multiplexer port map(car_add3 & sum_add3(3 downto 0), car_add2 & sum_add2(3 downto 0), car_add1); -- Gets 2 5-bit inputs, which are created by combining carry and sum of the 4-bit adders
+
+    s <= mult_out(4 downto 0) & sum_add1(3 downto 0);
+  end adder_arch;
 
   
 
