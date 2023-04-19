@@ -11,13 +11,13 @@ entity adder is
 end;
 
 library IEEE; use IEEE.STD_LOGIC_1164.all;
-architecture adder_arch for adder is
+architecture adder_arch of adder is
   
   -- Initzialize the 2 components of the adder
   component adder_4bit
-    port(a, b: in std_ulogic_vector(3, 0);
+    port(a, b: in std_ulogic_vector(3 downto 0);
     c_in : in std_ulogic;
-    sum : out std_ulogic(3, 0);
+    sum : out std_ulogic_vector(3 downto 0);
     c_out: out std_ulogic);
 
   end component;
@@ -43,12 +43,12 @@ architecture adder_arch for adder is
 
   begin
     add1: adder_4bit port map(a(3 downto 0), b(3 downto 0), c, sum_add1, car_add1); --Mapping the first 4 digits of the input of adder as input of add1
-    add2: adder_4bit port map(a(7 downto 4), b(7 downto 4), 0 sum_add2, car_add2);
-    add3: adder_4bit port map(a(7 downto 4), b(7 downto 4), 1, sum_add3, car_add4);
+    add2: adder_4bit port map(a(7 downto 4), b(7 downto 4), '0', sum_add2, car_add2);
+    add3: adder_4bit port map(a(7 downto 4), b(7 downto 4), '1', sum_add3, car_add4);
 
     mult: multiplexer port map(car_add3 & sum_add3(3 downto 0), car_add2 & sum_add2(3 downto 0), car_add1); -- Gets 2 5-bit inputs, which are created by combining carry and sum of the 4-bit adders
 
-    s <= mult_out(4 downto 0) & sum_add1(3 downto 0);
+    s <= mul_out(4 downto 0) & sum_add1(3 downto 0);
   end adder_arch;
 
   
@@ -100,9 +100,9 @@ end multiplexer_arch;
 -- 4-bit Adder
 library IEEE; use IEEE.STD_LOGIC_1164.all;
 entity adder_4bit is
-port(a, b: in std_ulogic_vector(3, 0);
+port(a, b: in std_ulogic_vector(3 downto 0);
     c_in : in std_ulogic;
-    sum : out std_ulogic(3, 0);
+    sum : out std_ulogic_vector(3 downto 0);
     c_out: out std_ulogic);
 end adder_4bit;
 
@@ -139,7 +139,6 @@ end adder_4bit_arch;
 -- Full adder from slide 42
 library IEEE; use IEEE.STD_LOGIC_1164.all;
 entity full_adder is
-begin
   port(a, b, carry_in: in std_ulogic; -- input ports
   sum, carry_out: out std_ulogic); -- output ports
 end full_adder;
