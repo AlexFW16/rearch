@@ -11,6 +11,41 @@ entity adder is
 end;
 
 library IEEE; use IEEE.STD_LOGIC_1164.all;
+architecture adder_arch for adder is
+  
+  -- Initzialize the 2 components of the adder
+  component adder_4bit
+    port(a, b: in std_ulogic_vector(3, 0);
+    c_in : in std_ulogic;
+    sum : out std_ulogic(3, 0);
+    c_out: out std_ulogic);
+
+  end component;
+
+  component multiplexer
+     port(a, b: in std_ulogic_vector(4 downto 0);
+       control : in std_ulogic;
+       c : out std_ulogic_vector(4 downto 0));
+  end component;
+
+  -- Intermediate carry declaration
+  -- add1: First adder
+  -- add2: second adder, carry 0
+  -- add3: third adder,carry 1
+  signal sum_add1: std_ulogic_vector(3 downto 0); -- The result of the first adder, the lower side of the overall result
+  signal car_add1: std_ulogic; -- carry of the first adder, used as control-input for the multiplexer
+  signal sum_add2: std_ulogic_vector(3 downto 0);
+  signal car_add2: std_ulogic;
+  signal sum_add3: std_ulogic_vector(3 downto 0);
+  signal car_add3: std_ulogic;
+  signal mul_out: std_ulogic_vector(4 downto 0); -- output of the multiplexer, upper part of final result
+
+  
+  
+
+  
+
+library IEEE; use IEEE.STD_LOGIC_1164.all;
 architecture adder_arch of adder is 
   component full_adder
     port(a, b, carry_in: in std_ulogic; -- input ports
@@ -57,7 +92,7 @@ end multiplexer_arch;
 -- 4-bit Adder
 library IEEE; use IEEE.STD_LOGIC_1164.all;
 entity adder_4bit is
-Port(a, b: in std_ulogic_vector(3, 0);
+port(a, b: in std_ulogic_vector(3, 0);
     c_in : in std_ulogic;
     sum : out std_ulogic(3, 0);
     c_out: out std_ulogic);
@@ -69,7 +104,7 @@ architecture adder_4bit_arch of adder_4bit is
 
 -- Full Adder component
 component full_adder
-Port(a, b, carry_in: in std_ulogic; -- input ports
+port(a, b, carry_in: in std_ulogic; -- input ports
   sum, carry_out: out std_ulogic); -- output ports
   end component;
 
@@ -78,7 +113,7 @@ signal c1, c2, c3 : std_ulogic;
 
 begin
 
--- Port mapping
+-- port mapping
 -- Sets the first bit of the input of the 4bitadder as arguments for the full_adder (and output).
 -- Sets the carry of the first full_adder to the intermediate signal c1, which is used as input for the second full_adder.
 -- Uses the carriage input of the 4-bit adder as carriage input for the full_adder (useful for subtracting)
