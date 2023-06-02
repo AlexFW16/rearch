@@ -451,7 +451,7 @@ entity shifter is -- shifter
        y:     out STD_ULOGIC_VECTOR(31 downto 0));
 end;
 
-architecture behave of adder is  -- shift a left by b (as int)
+architecture behave of shifter is  -- shift a left by b (as int)
   begin
     y <= a sll to_integer(unsigned(b));
   end;
