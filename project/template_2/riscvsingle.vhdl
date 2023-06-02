@@ -327,6 +327,12 @@ architecture struct of datapath is
          s:      in  STD_ULOGIC;
          y:      out STD_ULOGIC_VECTOR(width-1 downto 0));
   end component;
+  component mux2_single generic(width: integer);
+    port(d0:     in STD_ULOGIC;
+         d1:     in  STD_ULOGIC_VECTOR(width-1 downto 0);
+         s:      in  STD_ULOGIC;
+         y:      out STD_ULOGIC_VECTOR(width-1 downto 0));
+  end component;
   component mux3 generic(width: integer);
     port(d0, d1, d2: in  STD_ULOGIC_VECTOR(width-1 downto 0);
          s:          in  STD_ULOGIC_VECTOR(1 downto 0);
