@@ -170,8 +170,8 @@ entity controller is -- single-cycle controller
        funct7b5, Zero: in     STD_ULOGIC;
        ResultSrc:      out    STD_ULOGIC_VECTOR(1 downto 0);
        MemWrite:       out    STD_ULOGIC;
-       PCSrc           out    STD_ULOGIC;
-       ALUSrc:          out    STD_ULOGIC_VECTOR(1 downto 0);
+       PCSrc:           out    STD_ULOGIC;
+       ALUSrc:         out    STD_ULOGIC_VECTOR(1 downto 0);
        RegWrite:       out    STD_ULOGIC;
        Jump:           out    STD_ULOGIC;
        ImmSrc:         out    STD_ULOGIC_VECTOR(2 downto 0); -- 1 down to 0 before
@@ -224,7 +224,7 @@ entity maindec is -- main control decoder
        ALUSrc:         out STD_ULOGIC_VECTOR(1 downto 0);
        RegWrite, Jump: out STD_ULOGIC;
        ImmSrc:         out STD_ULOGIC_VECTOR(2 downto 0);
-       ALUOp:          out STD_ULOGIC_VECTOR(1 downto 0)
+       ALUOp:          out STD_ULOGIC_VECTOR(1 downto 0);
        BLT,ShiftSrc:       out STD_ULOGIC); -- new
 end;
 
@@ -240,6 +240,7 @@ begin
         when "000" => controls <= "001000000101000"; -- beq
         when "100" => controls <= "0010000--110010"; -- blt
         when others => controls <= "-----------"; -- not valid
+        end case; 
       when "0010011" => controls <= "1000010000100-0"; -- I-type ALU
       when "1101111" => controls <= "1011000100001-0"; -- jal
       when "1100111" => controls <= "1000010100001-0"; -- jalr
