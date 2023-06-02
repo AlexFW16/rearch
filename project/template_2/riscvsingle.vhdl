@@ -338,6 +338,11 @@ architecture struct of datapath is
          s:          in  STD_ULOGIC_VECTOR(1 downto 0);
          y:          out STD_ULOGIC_VECTOR(width-1 downto 0));
   end component;
+  component mux3_pc generic(width: integer);
+    port(d0, d1, d2: in  STD_ULOGIC_VECTOR(width-1 downto 0);
+         s:          in  STD_ULOGIC_VECTOR(1 downto 0);
+         y:          out STD_ULOGIC_VECTOR(width-1 downto 0));
+  end component;
   component mux4 generic(width: integer); --new 
     port(d0, d1, d2, d3: in  STD_ULOGIC_VECTOR(width-1 downto 0);
          s:          in  STD_ULOGIC_VECTOR(1 downto 0);
@@ -376,7 +381,7 @@ begin
   pcreg: flopr generic map(32) port map(clk, reset, PCNext, PC_s);
   pcadd4: adder port map(PC_s, X"00000004", PCPlus4);
   pcaddbranch: adder port map(PC_s, ImmExt, PCTarget);
-  pcmux: mux3 generic map(32) port map(PCPlus4, PCTarget, ALUResult_s, (Jump & PCSrc), PCNext);
+  pcmux: mux3_pc generic map(32) port map(PCPlus4, PCTarget, ALUResult_s, (Jump & PCSrc), PCNext);
 
   PC <= PC_s;
     
@@ -577,6 +582,26 @@ begin
     if    (s = "00") then y <= d0;
     elsif (s = "01") then y <= d1;
     elsif (s = "10") then y <= d2;
+    end if;
+  end process;
+end;
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.all;
+
+entity mux3_pc is -- three-input multiplexer
+  generic(width: integer :=8);
+  port(d0, d1, d2: in  STD_ULOGIC_VECTOR(width-1 downto 0);
+       s:          in  STD_ULOGIC_VECTOR(1 downto 0);
+       y:          out STD_ULOGIC_VECTOR(width-1 downto 0));
+end;
+
+architecture behave of mux3_pc is
+begin
+  process(d0, d1, d2, s) begin
+    if    (s = "00") then y <= d0;
+    elsif (s = "01") then y <= d1;
+    elsif (s = "11") then y <= d2;
     end if;
   end process;
 end;
