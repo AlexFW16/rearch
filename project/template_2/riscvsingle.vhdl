@@ -121,18 +121,21 @@ architecture struct of riscvsingle is
        funct7b5, Zero: in     STD_ULOGIC;
        ResultSrc:      out    STD_ULOGIC_VECTOR(1 downto 0);
        MemWrite:       out    STD_ULOGIC;
-       PCSrc, ALUSrc:  out    STD_ULOGIC;
+       PCSrc,ALUSrc:   out    STD_ULOGIC;
        RegWrite:       out    STD_ULOGIC;
        Jump:           out    STD_ULOGIC;
-       ImmSrc:         out    STD_ULOGIC_VECTOR(1 downto 0);
-       ALUControl:     out    STD_ULOGIC_VECTOR(2 downto 0));
+       ImmSrc:         out    STD_ULOGIC_VECTOR(2 downto 0); -- 1 down to 0 before
+       ALUControl:     out    STD_ULOGIC_VECTOR(2 downto 0);
+       BLT:            out    STD_ULOGIC; -- new
+       ShiftSrc:       out    STD_ULOGIC; -- new
+       );
   end component;
   component datapath
     port(clk, reset:           in     STD_ULOGIC;
          ResultSrc:            in     STD_ULOGIC_VECTOR(1  downto 0);
-         PCSrc, ALUSrc:        in     STD_ULOGIC;
+         PCSrc,ALUSrc:         in     STD_ULOGIC;
          RegWrite:             in     STD_ULOGIC;
-         ImmSrc:               in     STD_ULOGIC_VECTOR(1  downto 0);
+         ImmSrc:               in     STD_ULOGIC_VECTOR(2  downto 0); -- 1 down to 0 before
          ALUControl:           in     STD_ULOGIC_VECTOR(2  downto 0);
          Zero:                 out    STD_ULOGIC;
          PC:                   out    STD_ULOGIC_VECTOR(31 downto 0);
@@ -141,18 +144,18 @@ architecture struct of riscvsingle is
          ReadData:             in     STD_ULOGIC_VECTOR(31 downto 0));
   end component;
     
-  signal ALUSrc, RegWrite, Jump, Zero, PCSrc: STD_ULOGIC;
-  signal ResultSrc, ImmSrc: STD_ULOGIC_VECTOR(1 downto 0);
-  signal ALUControl: STD_ULOGIC_VECTOR(2 downto 0);
+  signal RegWrite, Jump, Zero, PCSrc, BLT, ShiftSrc: STD_ULOGIC;
+  signal ResultSrc, ALUSrc: STD_ULOGIC_VECTOR(1 downto 0);
+  signal ALUControl, ImmSrc: STD_ULOGIC_VECTOR(2 downto 0);
 begin
   c: controller port map(Instr(6 downto 0), Instr(14 downto 12),
                          Instr(30), Zero, ResultSrc, MemWrite,
                          PCSrc, ALUSrc, RegWrite, Jump,
-                         ImmSrc, ALUControl);
+                         ImmSrc, ALUControl, BLT, ShiftSrc);
   dp: datapath port map(clk, reset, ResultSrc, PCSrc, ALUSrc, 
                         RegWrite, ImmSrc, ALUControl, Zero, 
                         PC, Instr, ALUResult,  WriteData, 
-                        ReadData);
+                        ReadData, );
 
 end;
 
@@ -165,11 +168,13 @@ entity controller is -- single-cycle controller
        funct7b5, Zero: in     STD_ULOGIC;
        ResultSrc:      out    STD_ULOGIC_VECTOR(1 downto 0);
        MemWrite:       out    STD_ULOGIC;
-       PCSrc, ALUSrc:  out    STD_ULOGIC;
+       PCSrc,ALUSrc:   out    STD_ULOGIC;
        RegWrite:       out    STD_ULOGIC;
        Jump:           out    STD_ULOGIC;
-       ImmSrc:         out    STD_ULOGIC_VECTOR(1 downto 0);
-       ALUControl:     out    STD_ULOGIC_VECTOR(2 downto 0));
+       ImmSrc:         out    STD_ULOGIC_VECTOR(2 downto 0); -- 1 down to 0 before
+       ALUControl:     out    STD_ULOGIC_VECTOR(2 downto 0);
+       BLT:            out    STD_ULOGIC;  -- new
+       ShiftSrc:       out    STD_ULOGIC); -- new
 end;
 
 architecture struct of controller is
@@ -179,8 +184,10 @@ architecture struct of controller is
          MemWrite:       out STD_ULOGIC;
          Branch, ALUSrc: out STD_ULOGIC;
          RegWrite, Jump: out STD_ULOGIC;
-         ImmSrc:         out STD_ULOGIC_VECTOR(1 downto 0);
-         ALUOp:          out STD_ULOGIC_VECTOR(1 downto 0));
+         ImmSrc:         out STD_ULOGIC_VECTOR(2 downto 0); -- 1 down to 0 before
+         ALUOp:          out STD_ULOGIC_VECTOR(1 downto 0);
+         BLT:            out    STD_ULOGIC;  -- new
+         ShiftSrc:       out    STD_ULOGIC); -- new
   end component;
   component aludec
     port(opb5:       in  STD_ULOGIC;
@@ -211,8 +218,10 @@ entity maindec is -- main control decoder
        MemWrite:       out STD_ULOGIC;
        Branch, ALUSrc: out STD_ULOGIC;
        RegWrite, Jump: out STD_ULOGIC;
-       ImmSrc:         out STD_ULOGIC_VECTOR(1 downto 0);
-       ALUOp:          out STD_ULOGIC_VECTOR(1 downto 0));
+       ImmSrc:         out STD_ULOGIC_VECTOR(2 downto 0);
+       ALUOp:          out STD_ULOGIC_VECTOR(1 downto 0)
+       BLT:            out STD_ULOGIC;  -- new
+       ShiftSrc:       out STD_ULOGIC); -- new
 end;
 
 architecture behave of maindec is
