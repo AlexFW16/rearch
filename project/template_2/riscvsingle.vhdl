@@ -615,7 +615,7 @@ end;
 architecture behave of shifter is  -- shift a left by b (as int)
 begin
   --y <= a sll to_integer(unsigned(b));
-  y <= shift_left(a, to_integer(b));
+  y <= shift_left(signed(a), to_integer(unsigned(b)));
 end;
 
 
