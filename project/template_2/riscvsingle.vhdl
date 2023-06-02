@@ -126,9 +126,7 @@ architecture struct of riscvsingle is
        Jump:           out    STD_ULOGIC;
        ImmSrc:         out    STD_ULOGIC_VECTOR(2 downto 0); -- 1 down to 0 before
        ALUControl:     out    STD_ULOGIC_VECTOR(2 downto 0);
-       BLT:            out    STD_ULOGIC; -- new
-       ShiftSrc:       out    STD_ULOGIC; -- new
-       );
+       BLT,ShiftSrc:   out    STD_ULOGIC); -- new
   end component;
   component datapath
     port(clk, reset:           in     STD_ULOGIC;
@@ -137,6 +135,7 @@ architecture struct of riscvsingle is
          RegWrite:             in     STD_ULOGIC;
          ImmSrc:               in     STD_ULOGIC_VECTOR(2  downto 0); -- 1 down to 0 before
          ALUControl:           in     STD_ULOGIC_VECTOR(2  downto 0);
+         BLT, ShiftSrc:        in     STD_ULOGIC; -- new
          Zero:                 out    STD_ULOGIC;
          PC:                   out    STD_ULOGIC_VECTOR(31 downto 0);
          Instr:                in     STD_ULOGIC_VECTOR(31 downto 0);
@@ -153,9 +152,9 @@ begin
                          PCSrc, ALUSrc, RegWrite, Jump,
                          ImmSrc, ALUControl, BLT, ShiftSrc);
   dp: datapath port map(clk, reset, ResultSrc, PCSrc, ALUSrc, 
-                        RegWrite, ImmSrc, ALUControl, Zero, 
+                        RegWrite, ImmSrc, ALUControl, BLT, ShiftSrc, Zero, 
                         PC, Instr, ALUResult,  WriteData, 
-                        ReadData, );
+                        ReadData, ); -- added BLT and ShiftSrc
 
 end;
 
@@ -173,21 +172,20 @@ entity controller is -- single-cycle controller
        Jump:           out    STD_ULOGIC;
        ImmSrc:         out    STD_ULOGIC_VECTOR(2 downto 0); -- 1 down to 0 before
        ALUControl:     out    STD_ULOGIC_VECTOR(2 downto 0);
-       BLT:            out    STD_ULOGIC;  -- new
-       ShiftSrc:       out    STD_ULOGIC); -- new
+       BLT,ShiftSrc:   out    STD_ULOGIC); -- new
 end;
 
 architecture struct of controller is
   component maindec
     port(op:             in  STD_ULOGIC_VECTOR(6 downto 0);
+         funct3:         in  STD_ULOGIC_VECTOR(2 downto 0); -- new
          ResultSrc:      out STD_ULOGIC_VECTOR(1 downto 0);
          MemWrite:       out STD_ULOGIC;
          Branch, ALUSrc: out STD_ULOGIC;
          RegWrite, Jump: out STD_ULOGIC;
          ImmSrc:         out STD_ULOGIC_VECTOR(2 downto 0); -- 1 down to 0 before
          ALUOp:          out STD_ULOGIC_VECTOR(1 downto 0);
-         BLT:            out    STD_ULOGIC;  -- new
-         ShiftSrc:       out    STD_ULOGIC); -- new
+         BLT,ShiftSrc:   out STD_ULOGIC); -- new
   end component;
   component aludec
     port(opb5:       in  STD_ULOGIC;
@@ -214,33 +212,38 @@ use IEEE.STD_LOGIC_1164.all;
 
 entity maindec is -- main control decoder
   port(op:             in  STD_ULOGIC_VECTOR(6 downto 0); -- TODO
+       funct3:         in  STD_ULOGIC_VECTOR(2 downto 0); -- new
        ResultSrc:      out STD_ULOGIC_VECTOR(1 downto 0);
        MemWrite:       out STD_ULOGIC;
        Branch, ALUSrc: out STD_ULOGIC;
        RegWrite, Jump: out STD_ULOGIC;
        ImmSrc:         out STD_ULOGIC_VECTOR(2 downto 0);
        ALUOp:          out STD_ULOGIC_VECTOR(1 downto 0)
-       BLT:            out STD_ULOGIC;  -- new
-       ShiftSrc:       out STD_ULOGIC); -- new
+       BLT,ShiftSrc:       out STD_ULOGIC); -- new
 end;
 
 architecture behave of maindec is
-  signal controls: STD_ULOGIC_VECTOR(10 downto 0);
+  signal controls: STD_ULOGIC_VECTOR(14 downto 0);
 begin
-  process(op) begin
+  process(op,funct3) begin -- We should have implemented SHIFT as an ALU function, then we would not have to decode funct3 here. Too late for that now...
     case op is
-      when "0000011" => controls <= "10010010000"; -- lw
-      when "0100011" => controls <= "00111000000"; -- sw
-      when "0110011" => controls <= "1--00000100"; -- R-type
-      when "1100011" => controls <= "01000001010"; -- beq
-      when "0010011" => controls <= "10010000100"; -- I-type ALU
-      when "1101111" => controls <= "11100100001"; -- jal
+      when "0000011" => controls <= "1000010010000-0"; -- lw
+      when "0100011" => controls <= "0001011000000-0"; -- sw
+      when "0110011" => controls <= "1---000000100-0"; -- R-type
+      when "1100011" => case funct3 is           -- B-type
+        when "000" => controls <= "001000000101000"; -- beq
+        when "100" => controls <= "0010000--110010"; -- blt
+        when others => controls <= "-----------"; -- not valid
+      when "0010011" => controls <= "1000010000100-0"; -- I-type ALU
+      when "1101111" => controls <= "1011000100001-0"; -- jal
+      when "1100111" => controls <= "1000010100001-0"; -- jalr
+      when "0010111" => controls <= "1100100000000-1"; -- U-Type (auipc)
       when others    => controls <= "-----------"; -- not valid
     end case;
   end process;
 
-  (RegWrite, ImmSrc(1), ImmSrc(0), ALUSrc, MemWrite,
-   ResultSrc(1), ResultSrc(0), Branch, ALUOp(1), ALUOp(0), Jump) <= controls;
+  (RegWrite, ImmSrc(2), ImmSrc(1), ImmSrc(0), ALUSrc(1), ALUSrc(0), MemWrite,
+   ResultSrc(1), ResultSrc(0), Branch, ALUOp(1), ALUOp(0), Jump, BLT, ShiftSrc) <= controls;
 end;
 
 library IEEE;
@@ -286,8 +289,9 @@ entity datapath is -- RISC-V datapath
        ResultSrc:            in     STD_ULOGIC_VECTOR(1  downto 0);
        PCSrc, ALUSrc:        in     STD_ULOGIC;
        RegWrite:             in     STD_ULOGIC;
-       ImmSrc:               in     STD_ULOGIC_VECTOR(1  downto 0);
+       ImmSrc:               in     STD_ULOGIC_VECTOR(2  downto 0); -- 1 downto 0 before
        ALUControl:           in     STD_ULOGIC_VECTOR(2  downto 0);
+       BLT, ShiftSrc:        in     STD_ULOGIC; -- new
        Zero:                 out    STD_ULOGIC;
        PC:                   out    STD_ULOGIC_VECTOR(31 downto 0);
        Instr:                in     STD_ULOGIC_VECTOR(31 downto 0);
