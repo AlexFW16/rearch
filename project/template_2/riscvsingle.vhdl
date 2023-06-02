@@ -615,7 +615,8 @@ end;
 architecture behave of shifter is  -- shift a left by b (as int)
 begin
   --y <= a sll to_integer(unsigned(b));
-  y <= std_logic_vector(shift_left(signed(a), to_integer(unsigned(b))));
+  shift_amount <= to_integer(unsigned(b(4 downto 0)));
+  y <= std_logic_vector(shift_left(signed(a), shift_amount));
 end;
 
 
