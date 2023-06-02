@@ -546,6 +546,9 @@ begin
   y <= d1 when s='1' else d0;
 end;
 
+library IEEE;
+use IEEE.STD_LOGIC_1164.all;
+
 entity mux2_single is -- two-input multiplexer
   port(d0:     in  STD_ULOGIC;
        d1:     in  STD_ULOGIC;
