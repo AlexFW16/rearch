@@ -462,7 +462,7 @@ use IEEE.STD_LOGIC_1164.all;
 
 entity extend is -- extend unit
   port(instr:  in  STD_ULOGIC_VECTOR(31 downto 7); -- TODO
-    immsrc: in  STD_ULOGIC_VECTOR(1  downto 0);
+    immsrc: in  STD_ULOGIC_VECTOR(2  downto 0);
     immext: out STD_ULOGIC_VECTOR(31 downto 0));
 end;
     
