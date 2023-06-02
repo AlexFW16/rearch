@@ -327,11 +327,11 @@ architecture struct of datapath is
          s:      in  STD_ULOGIC;
          y:      out STD_ULOGIC_VECTOR(width-1 downto 0));
   end component;
-  component mux2_single generic(width: integer);
-    port(d0:     in STD_ULOGIC;
-         d1:     in  STD_ULOGIC_VECTOR(width-1 downto 0);
+  component mux2_single;
+    port(d0:     in  STD_ULOGIC;
+         d1:     in  STD_ULOGIC;
          s:      in  STD_ULOGIC;
-         y:      out STD_ULOGIC_VECTOR(width-1 downto 0));
+         y:      out STD_ULOGIC;
   end component;
   component mux3 generic(width: integer);
     port(d0, d1, d2: in  STD_ULOGIC_VECTOR(width-1 downto 0);
@@ -398,7 +398,7 @@ begin
   mainalu: alu port map(SrcA, SrcB,ALUControl, ALUResult_s, Zero_s);
   resultmux: mux4 generic map(32) port map(ALUResult_s, ReadData, PCPlus4, ShiftOut, ResultSrc,
                                            Result);
-  zeromux: mux2_single generic map(1) port map(Zero_s, ALUResult_s(31), BLT, Zero);
+  zeromux: mux2_single port map(Zero_s, ALUResult_s(31), BLT, Zero);
 
   ALUResult <= ALUResult_s;
   WriteData <= WriteData_s;
@@ -556,11 +556,10 @@ begin
 end;
 
 entity mux2_single is -- two-input multiplexer
-  generic(width: integer :=8);
-  port(d0: in STD_ULOGIC;
-       d1: in  STD_ULOGIC_VECTOR(width-1 downto 0);
+  port(d0:     in  STD_ULOGIC;
+       d1:     in  STD_ULOGIC
        s:      in  STD_ULOGIC;
-       y:      out STD_ULOGIC_VECTOR(width-1 downto 0));
+       y:      out STD_ULOGIC);
 end;
 
 architecture behave of mux2_single is
