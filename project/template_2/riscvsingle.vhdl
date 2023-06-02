@@ -303,7 +303,7 @@ entity datapath is -- RISC-V datapath
        PC:                   out    STD_ULOGIC_VECTOR(31 downto 0);
        Instr:                in     STD_ULOGIC_VECTOR(31 downto 0);
        ALUResult, WriteData: out    STD_ULOGIC_VECTOR(31 downto 0);
-       ReadData:             in     STD_ULOGIC_VECTOR(31 downto 0)
+       ReadData:             in     STD_ULOGIC_VECTOR(31 downto 0);
        Jump:                 in     STD_ULOGIC);
 end;
 
@@ -369,7 +369,7 @@ begin
   pcreg: flopr generic map(32) port map(clk, reset, PCNext, PC_s);
   pcadd4: adder port map(PC_s, X"00000004", PCPlus4);
   pcaddbranch: adder port map(PC_s, ImmExt, PCTarget);
-  pcmux: mux3 generic map(32) port map(PCPlus4, PCTarget, ALUResult_s, Jump & PCSrc, PCNext);
+  pcmux: mux3 generic map(32) port map(PCPlus4, PCTarget, ALUResult_s, (Jump & PCSrc), PCNext);
 
   PC <= PC_s;
     
