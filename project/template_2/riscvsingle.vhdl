@@ -204,8 +204,8 @@ architecture struct of controller is
   signal Branch: STD_ULOGIC;
   signal Jump_s : STD_ULOGIC;
 begin
-  md: maindec port map(op, funct3, ResultSrc, MemWrite, Branch,
-                       ALUSrc, RegWrite, Jump_s, ImmSrc, ALUOp);
+  md: maindec port map(op, funct3, ResultSrc, ALUSrc, MemWrite, Branch, 
+                      RegWrite, Jump_s, ImmSrc, ALUOp);
   ad: aludec port map(op(5), funct3, funct7b5, ALUOp, ALUControl);
   
   PCSrc <= (Branch and Zero) or Jump_s;
