@@ -363,8 +363,7 @@ architecture struct of datapath is
   signal SrcA, SrcB:                STD_ULOGIC_VECTOR(31 downto 0); --new
   signal ShiftA, ShiftB, ShiftOut:            STD_ULOGIC_VECTOR(31 downto 0); --new
   signal Result:                    STD_ULOGIC_VECTOR(31 downto 0);
-  signal Zero_s:                    STD_ULOGIC_VECTOR(0 downto 0);
-  signal ZeroMuxOut:                STD_ULOGIC;
+  signal Zero_s, ZeroMuxOut:                STD_ULOGIC;
   signal PC_s, WriteData_s, ALUResult_s : STD_ULOGIC_VECTOR(31 downto 0);
 begin
   -- next PC logic
@@ -393,7 +392,7 @@ begin
   mainalu: alu port map(SrcA, SrcB,ALUControl, ALUResult_s, Zero_s);
   resultmux: mux4 generic map(32) port map(ALUResult_s, ReadData, PCPlus4, ShiftOut, ResultSrc,
                                            Result);
-  zeromux: mux2 generic map(1) port map(Zero_s, ALUResult_s(0), BLT, Zero);
+  zeromux: mux2_single generic map(1) port map(Zero_s, ALUResult_s(31), BLT, Zero);
 
   ALUResult <= ALUResult_s;
   WriteData <= WriteData_s;
@@ -546,6 +545,19 @@ entity mux2 is -- two-input multiplexer
 end;
 
 architecture behave of mux2 is
+begin
+  y <= d1 when s='1' else d0;
+end;
+
+entity mux2_single is -- two-input multiplexer
+  generic(width: integer :=8);
+  port(d0: in STD_ULOGIC;
+       d1: in  STD_ULOGIC_VECTOR(width-1 downto 0);
+       s:      in  STD_ULOGIC;
+       y:      out STD_ULOGIC_VECTOR(width-1 downto 0));
+end;
+
+architecture behave of mux2_single is
 begin
   y <= d1 when s='1' else d0;
 end;
