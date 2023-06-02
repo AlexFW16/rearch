@@ -581,6 +581,8 @@ begin
   end process;
 end;
 
+library IEEE;
+use IEEE.STD_LOGIC_1164.all;
 
 entity mux4 is -- four-input multiplexer -new
   generic(width: integer :=8);
