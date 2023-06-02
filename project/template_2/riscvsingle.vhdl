@@ -557,7 +557,7 @@ end;
 
 entity mux2_single is -- two-input multiplexer
   port(d0:     in  STD_ULOGIC;
-       d1:     in  STD_ULOGIC
+       d1:     in  STD_ULOGIC;
        s:      in  STD_ULOGIC;
        y:      out STD_ULOGIC);
 end;
