@@ -363,7 +363,8 @@ architecture struct of datapath is
   signal SrcA, SrcB:                STD_ULOGIC_VECTOR(31 downto 0); --new
   signal ShiftA, ShiftB, ShiftOut:            STD_ULOGIC_VECTOR(31 downto 0); --new
   signal Result:                    STD_ULOGIC_VECTOR(31 downto 0);
-  signal Zero_s, ZeroMuxOut:                STD_ULOGIC;
+  signal Zero_s:                    STD_ULOGIC_VECTOR(0 downto 0);
+  signal ZeroMuxOut:                STD_ULOGIC;
   signal PC_s, WriteData_s, ALUResult_s : STD_ULOGIC_VECTOR(31 downto 0);
 begin
   -- next PC logic
