@@ -1,0 +1,37 @@
+v 4
+file "/home/vagrant/Desktop/projekt/rearch/project/template_2/test_dir/" "test_ihateyou.vhdl" "9b0f7a11c8ea14df21ed392382d26fc81d3ddbb7" "20230602203610.090":
+  package checkresultpkg at 93( 3086) + 0 on 291;
+  entity riscvsingle at 105( 3454) + 0 on 292;
+  architecture struct of riscvsingle at 117( 3910) + 0 on 293;
+  entity controller at 159( 5868) + 0 on 294;
+  architecture struct of controller at 175( 6490) + 0 on 295;
+  entity maindec at 205( 7578) + 0 on 296;
+  architecture behave of maindec at 218( 8028) + 0 on 297;
+  entity aludec at 254( 8937) + 0 on 298;
+  architecture behave of aludec at 265( 9260) + 0 on 299;
+  entity datapath at 288( 10324) + 0 on 300;
+  architecture struct of datapath at 306( 11119) + 0 on 301;
+  entity regfile at 395( 14334) + 0 on 302;
+  architecture behave of regfile at 408( 14721) + 0 on 303;
+  entity adder at 433( 15500) + 0 on 304;
+  architecture behave of adder at 442( 15700) + 0 on 305;
+  entity extend at 447( 15792) + 0 on 306;
+  architecture behave of extend at 456( 16034) + 0 on 307;
+  entity flopr at 484( 16850) + 0 on 308;
+  architecture asynchronous of flopr at 495( 17165) + 0 on 309;
+  entity flopenr at 504( 17364) + 0 on 310;
+  architecture asynchronous of flopenr at 515( 17704) + 0 on 311;
+  entity mux2 at 524( 17931) + 0 on 312;
+  architecture behave of mux2 at 534( 18196) + 0 on 313;
+  entity mux3 at 539( 18269) + 0 on 314;
+  architecture behave of mux3 at 549( 18567) + 0 on 315;
+  entity testbench at 559( 18773) + 0 on 316;
+  architecture test of testbench at 567( 18918) + 0 on 317;
+  entity top at 615( 20792) + 0 on 318;
+  architecture test of top at 625( 21073) + 0 on 319;
+  entity imem at 660( 22364) + 0 on 320;
+  architecture behave of imem at 671( 22623) + 0 on 321;
+  entity dmem at 699( 23400) + 0 on 322;
+  architecture behave of dmem at 711( 23692) + 0 on 323;
+  entity alu at 736( 24361) + 0 on 324;
+  architecture behave of alu at 747( 24664) + 0 on 325;
