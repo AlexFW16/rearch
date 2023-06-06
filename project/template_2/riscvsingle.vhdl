@@ -243,20 +243,6 @@ architecture behave of maindec is
 begin
 
   process(op, funct3) begin -- We should have implemented SHIFT as an ALU function, then we would not have to decode funct3 here. Too late for that now...
-
---debug
-  -- report "OP" severity note;
-  --report to_string(op) severity note;
-
- -- report "control" severity note;
---  report to_string(controls) severity note;
-
-
-
-
-  report "Branch = " & to_string(Branch);
-
-
     case op is
       when "0000011" => controls <= "1000010010000-00"; -- lw
       when "0100011" => controls <= "0001011000000-00"; -- sw
@@ -422,66 +408,7 @@ begin
   pcmux: mux3_pc generic map(32) port map(PCPlus4, PCTarget, ALUResult_s, (Jalr & PCSrc), PCNext);
 
   PC <= PC_s;
-
-  process(PC_s) begin
-    report "-------------------" severity note;
-  report "PC = " & integer'image(to_integer(unsigned(PC_s)));
-
-report "Result Src" severity note;
-     report to_string(ResultSrc) severity note;
-
-
-    report "Result" severity note;
-    report to_string(Result) severity note;
-
-    report "ALUResult" severity note;
-    report to_string(ALUResult) severity note;
-
-    report "SrcA" severity note;
-    report to_string(SRCA) severity note;
-
-    report "SrcB" severity note;
-    report to_string(SRCB) severity note;
-
-
-    report "ALUControl" severity note;
-    report to_string(ALUControl) severity note;
-
-    report "ALUSrc" severity note;
-    report to_string(ALUSrc) severity note;
-
-
-  report "Zero = " & to_string(Zero);
-  report "BLT = " & to_string(BLT);
-  report "ALUResult(31) = " & to_string(ALUResult_s(31));
-  report "zero_s = " & to_string(Zero_s);
-
-  report "--------"; 
-  report " " & to_string(Zero_s);
-  report "zero_s = " & to_string(Zero_s);
-
-
-
-    report "\n" severity note;
-
-
-    -- report  "ShiftA" severity note;
-    -- report to_string(ShiftA) severity note;
-
-     -- report  "ShiftB" severity note;
-    -- report to_string(ShiftB) severity note;
-
-    -- report  "ShiftOut" severity note;
-    -- report to_string(ShiftOut) severity note;
-
-
- 
-  end process;
-
-
-
-
-    
+   
   -- register file logic
   rf: regfile port map(clk, RegWrite, Instr(19 downto 15), Instr(24 downto 20),
                          Instr(11 downto 7), Result, RD1, WriteData_s); -- SrcA -> RD1
